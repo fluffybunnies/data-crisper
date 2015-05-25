@@ -3,86 +3,137 @@ var test = require('tape')
 ,undef
 
 test('gives data',function(t){
-	t.plan(2)
+	t.plan(3)
 
 	var storedData = {a:1}
-	var cache = crisper('myData', function(cb){
+	var cache = crisper(function(cb){
 		process.nextTick(function(){
 			cb(false,storedData)
+			onDataStored()
 		})
 	})
 
 	t.ok(cache.get() === undef, 'returns undef on too-soon')
+	cache.setDefault('giraffe')
+	t.ok(cache.get() == 'giraffe', 'custom default on too-soon')
 
-	process.nextTick(function(){
-		t.ok(cache.get() == storedData, 'returns fresh data')
-		cache.pause()
-	})
+	function onDataStored(){
+		process.nextTick(function(){
+			t.ok(cache.get() == storedData, 'got data!')
+			cache.destroy()
+		})
+	}
 
 })
 
-test('default and stale worky',function(t){
-	t.plan(5)
+test('poly',function(t){
+	t.plan(8)
 
-	var storedData = {a:1}
-	var cache = crisper('myData', 30000, function(cb){
-		process.nextTick(function(){
-			cb(false,storedData)
-			cache.pause()
-		})
+	var checks = 3
+	var timeoutAfter = setTimeout(function(){
+		t.fail('getter failed to be called')
+		cache1.destroy(); cache2.destroy(); cache3.destroy();
+	},2000)
+
+	var cache1 = crisper(10000, function(){
+		t.ok(true, 'getter called')
+		cache1.destroy()
+		if (!--checks) clearTimeout(timeoutAfter)
+	}, 'piglett')
+	t.ok(cache1._ttl == 10000, 'ttl set')
+	t.ok(cache1.getDefault() == 'piglett', 'default set')
+
+	var cache2 = crisper(10000, 'zebra', function(){
+		t.ok(true, 'getter called')
+		cache2.destroy()
+		if (!--checks) clearTimeout(timeoutAfter)
 	})
-	cache.setDefault('giraffe')
+	t.ok(cache2._ttl == 10000, 'ttl set')
+	t.ok(cache2.getDefault() == 'zebra', 'default set')
 
-	t.ok(cache.get() == 'giraffe', 'custom default returned on too-soon')
-
-	process.nextTick(function(){
-		t.ok(cache.get() == storedData, 'got data')
-		cache._wait(31000)
-		t.ok(cache.get() == 'giraffe', 'default returned when expired')
-		t.ok(cache.getStale() == storedData, 'keeps a broken fridge out back')
-		cache.setDefault('piglett')
-		t.ok(cache.get() == 'piglett', 'can update default')
+	var cache3 = crisper(function(){
+		t.ok(true, 'getter called')
+		cache3.destroy()
+		if (!--checks) clearTimeout(timeoutAfter)
 	})
+	t.ok(cache3.getDefault() === undef, 'default set')
 
 })
 
 test('pause and resume worky',function(t){
-	t.plan(3)
+	t.plan(2)
 
 	var storedData = {a:1}
-	var cache = crisper('myData', 30000, function(cb){
+	var cache = crisper(function(cb){
 		process.nextTick(function(){
 			cb(false,storedData)
 		})
 	})
-
-	process.nextTick(function(){
-		cache.pause()
-		t.ok(cache.get() == storedData, 'still fresh after pause')
-		cache._wait(31000)
-		t.ok(cache.get() === undef, 'expiration binding after pause')
+	cache.pause()
+	setTimeout(function(){
+		t.ok(cache.get() === undef, 'paused before fetch')
 		cache.resume()
-		process.nextTick(function(){
-			t.ok(cache.get() == storedData, 'resume worky')
-		})
-	})
+		setTimeout(function(){
+			t.ok(cache.get() == storedData, 'resumed')
+			cache.destroy()
+		},200)
+	},200)
+
 })
 
 test('destroy',function(t){
 	t.plan(2)
 
-	var cache = crisper('myData', function(cb){
+	var storedData = {a:1}
+	var cache = crisper(function(cb){
 		process.nextTick(function(){
-			cb(false,{a:1})
+			cb(false,storedData)
+			onDataStored()
 		})
 	})
 
-	cache.setDefault('zebra')
+	function onDataStored(){
+		process.nextTick(function(){
+			t.ok(cache.get() == storedData, 'got data')
+			cache.destroy()
+			t.ok(cache.get() === undef && cache._value === undef, 'data gone')
+		})
+	}
 
-	process.nextTick(function(){
-		cache.destroy()
-		t.ok(cache.get() === undef, 'you get nuthin once destroyed')
-		t.ok(cache._defaultValue === undef && cache._value === undef && cache._timeout === undef, 'data gone')
+})
+
+test('increasing ttl',function(t){
+	t.plan(6)
+
+	var res = {err:false}
+	var ttl = 10
+	var cache = crisper(ttl,function(cb){
+		process.nextTick(function(){
+			cb(res.err, 1)
+			onDataStored()
+		})
 	})
+
+	var num = 0
+	function onDataStored(){
+		if (num == 2) {
+			cache.get()
+			ttl = 10
+			t.ok(cache._modTtl == ttl, 'ttl reset after get() '+num+' '+cache._modTtl+'=='+ttl)
+		} else if (num == 5) {
+			res.err = 'some error'
+			ttl = 10
+		} else if (num == 6) {
+			res.err = false
+			t.ok(cache._modTtl == ttl, 'ttl reset after error '+num+' '+cache._modTtl+'=='+ttl)
+		} else if (num == 7) {
+			cache.destroy()
+		} else {
+			t.ok(cache._modTtl == ttl, 'ttl bigger! '+num+' '+cache._modTtl+'=='+ttl)
+			ttl = Math.ceil(ttl*1.5);
+		}
+		++num
+	}
+
 })
 
