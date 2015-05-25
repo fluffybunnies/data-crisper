@@ -1,0 +1,26 @@
+{
+	"name": "data-crisper",
+	"version": "0.0.0",
+	"description": "Keep your data fresh and your energy bill low",
+	"keywords": [
+		"cache",
+		"performance"
+	],
+	"homepage": "https://github.com/fluffybunnies/data-crisper",
+	"author": "fluffybunnies",
+	"license": "MIT",
+	"main": "index.js",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:fluffybunnies/data-crisper.git"
+	},
+	"devDependencies": {
+		"tape": "~4.0.0"
+	},
+	"bugs": {
+		"url": "https://github.com/fluffybunnies/data-crisper/issues"
+	},
+	"scripts": {
+		"test": "node test/test.js"
+	}
+}
