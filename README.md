@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/fluffybunnies/data-crisper.png)](http://travis-ci.org/fluffybunnies/data-crisper)
+
 # data-crisper
 
 Refresh cached data on a decaying interval. Getter is synchronous and non-blocking for client performance. For use when your app is ok with stale data when requests are low.
@@ -29,7 +31,7 @@ cache.setDefault({});
 ## Methods
 
 
-### crisper([ttl,] fetchData [,defaultValue])
+### crisper( [ttl [, defaultValue], ] fetchData )
 
 Returns a `Crisper` that will `fetchData()` and update cache every `ttl` ms behind the scenes
 `ttl` will increase over time if data is not being requested

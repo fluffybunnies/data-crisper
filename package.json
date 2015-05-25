@@ -1,9 +1,11 @@
 {
 	"name": "data-crisper",
-	"version": "0.0.0",
-	"description": "Keep your data fresh and your energy bill low",
+	"version": "0.0.1",
+	"description": "Refresh cached data on an interval that decays if not being accessed",
 	"keywords": [
 		"cache",
+		"interval",
+		"ttl",
 		"performance"
 	],
 	"homepage": "https://github.com/fluffybunnies/data-crisper",
