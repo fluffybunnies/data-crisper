@@ -103,7 +103,7 @@ test('destroy',function(t){
 })
 
 test('increasing ttl',function(t){
-	t.plan(7)
+	t.plan(8)
 
 	var res = {err:false}
 	var ttl = 10
@@ -128,7 +128,7 @@ test('increasing ttl',function(t){
 			t.ok(cache._modTtl == ttl, 'ttl reset after error '+num+' '+cache._modTtl+'=='+ttl)
 			ttl = Math.ceil(ttl*1.5);
 		} else if (num == 7) {
-			cache.getSilently()
+			t.ok(cache.getSilently() === 1, 'getSilently() gives data')
 			t.ok(cache._modTtl == ttl, 'ttl untouched after getSilently() '+num+' '+cache._modTtl+'=='+ttl)
 		} else if (num == 8) {
 			cache.destroy()
