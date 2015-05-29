@@ -39,7 +39,12 @@ Crisper.prototype.get = function(){
 		z._modTtl = z._ttl
 		z._startFetching(z._ttlRemaining())
 	}
-	return z._value ? z._value.v : z._defaultValue
+	return z._get()
+	
+}
+
+Crisper.prototype.getSilently = function(){
+	return this._get()
 }
 
 Crisper.prototype.setDefault = function(value){
@@ -69,6 +74,7 @@ Crisper.prototype.destroy = function(){
 	delete this._defaultValue
 }
 
+
 Crisper.prototype._ttlRemaining = function(){
 	return this._value ? this._value.t + this._modTtl - Date.now() : 0
 }
@@ -77,9 +83,11 @@ Crisper.prototype._increaseTtl = function(){
 	this._modTtl = Math.ceil(this._modTtl*1.5)
 }
 
+Crisper.prototype._get = function(data){
+	return this._value ? this._value.v : this.getDefault()
+}
+
 Crisper.prototype._set = function(data){
-	if (this._paused)
-		return;
 	this._value = {
 		v: data
 		,t: Date.now()

@@ -31,27 +31,32 @@ cache.setDefault({});
 ## Methods
 
 
-### crisper(/* ttl, fetchData*, defaultValue */)
+### crisper(ttl, fetchData [, defaultValue])
 
 Returns a `Crisper` that will `fetchData()` and update cache every `ttl` ms behind the scenes
 
-`ttl` will increase over time if data is not being requested
+`ttl` will increase over time if data is not being accessed
 
 `ttl` will reset if `fetchData()` calls back with an error
 
-`fetchData` is the only required field. `ttl` must appear before `defaultValue` in case the latter is numeric.
+`fetchData` is the only required field; `ttl` defaults to 30000 (30 sec)
 
 
 ### Crisper.get()
 
 Returns last successfully stored value
 
-Otherwise returns getDefault()
+Otherwise returns `getDefault()`
+
+
+### Crisper.getSilently()
+
+Same as 'get()' but will not affect `ttl`
 
 
 ### Crisper.setDefault( value )
 
-Set the `value` returned if data is stale
+Set the `value` returned if data has never been set
 
 
 ### Crisper.getDefault()
