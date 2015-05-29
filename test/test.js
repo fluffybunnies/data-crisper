@@ -141,3 +141,27 @@ test('increasing ttl',function(t){
 
 })
 
+test('max timeout',function(t){
+	t.plan(3)
+
+	// var max = 139586437119
+	var max = 2147483647
+
+	var timeout = setTimeout(function(){
+		timeout = null
+	},max)
+	setTimeout(function(){
+		t.ok(timeout !== null, 'max timeout ok')
+		clearTimeout(timeout)
+	},1)
+
+	var cache = crisper(max,function(cb){cb()})
+	cache._increaseTtl()
+	t.ok(cache._modTtl == max, 'cant decay beyond maxTtl')
+	cache.destroy()
+
+	var cache = crisper(max+1,function(cb){cb()})
+	t.ok(cache._ttl == max, 'ttl lowered to cap')
+	cache.destroy()
+
+})

@@ -31,7 +31,7 @@ cache.setDefault({});
 ## Methods
 
 
-### crisper(ttl, fetchData [, defaultValue])
+### crisper( ttl, fetchData [, defaultValue] )
 
 Returns a `Crisper` that will `fetchData()` and update cache every `ttl` ms behind the scenes
 

@@ -1,6 +1,6 @@
 {
 	"name": "data-crisper",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "Refresh cached data on an interval that decays if not being accessed",
 	"keywords": [
 		"cache",

@@ -1,5 +1,6 @@
 
 var defaultTtl = 30000
+,maxTtl = 2147483647
 
 module.exports = crisper
 
@@ -21,7 +22,7 @@ function crisper(/* ttl, fetchData, defaultValue */){
 
 function Crisper(ttl, fetchData, defaultValue){
 	var z = this
-	z._ttl = ttl
+	z._ttl = ttl < maxTtl ? ttl : maxTtl
 	z._fetchData = fetchData
 	z._defaultValue = defaultValue
 
@@ -81,6 +82,8 @@ Crisper.prototype._ttlRemaining = function(){
 
 Crisper.prototype._increaseTtl = function(){
 	this._modTtl = Math.ceil(this._modTtl*1.5)
+	if (this._modTtl > maxTtl)
+		this._modTtl = maxTtl
 }
 
 Crisper.prototype._get = function(data){
