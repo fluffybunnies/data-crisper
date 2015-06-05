@@ -114,27 +114,30 @@ test('increasing ttl',function(t){
 		})
 	})
 
-	var num = 0
+	var num = 0, ttli = 1
 	function onDataStored(){
 		if (num == 2) {
 			cache.get()
+			ttli = 1
 			ttl = 10
 			t.ok(cache._modTtl == ttl, 'ttl reset after get() '+num+' '+cache._modTtl+'=='+ttl)
 		} else if (num == 5) {
 			res.err = 'some error'
+			ttli = 1
 			ttl = 10
 		} else if (num == 6) {
 			res.err = false
 			t.ok(cache._modTtl == ttl, 'ttl reset after error '+num+' '+cache._modTtl+'=='+ttl)
-			ttl = Math.ceil(ttl*1.5);
+			ttl = 10*fib(++ttli)
 		} else if (num == 7) {
 			t.ok(cache.getSilently() === 1, 'getSilently() gives data')
 			t.ok(cache._modTtl == ttl, 'ttl untouched after getSilently() '+num+' '+cache._modTtl+'=='+ttl)
+			ttl = 10*fib(++ttli)
 		} else if (num == 8) {
 			cache.destroy()
 		} else {
 			t.ok(cache._modTtl == ttl, 'ttl bigger! '+num+' '+cache._modTtl+'=='+ttl)
-			ttl = Math.ceil(ttl*1.5);
+			ttl = 10*fib(++ttli)
 		}
 		++num
 	}
@@ -165,3 +168,16 @@ test('max timeout',function(t){
 	cache.destroy()
 
 })
+
+
+
+function fib(n){
+	var z = fib,undef,i;
+	if (!z.vals)
+		z.vals = [1,1];
+	if (z.vals[n] !== undef)
+		return z.vals[n];
+	for (i=z.vals.length;i<=n;++i)
+		z.vals[i] = z.vals[i-2] + z.vals[i-1];
+	return z.vals[n];
+}

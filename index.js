@@ -26,7 +26,7 @@ function Crisper(ttl, fetchData, defaultValue){
 	z._fetchData = fetchData
 	z._defaultValue = defaultValue
 
-	z._modTtl = z._ttl
+	z._resetTtl()
 	z._lastRequest = null
 	z._fetchVersion = 0
 
@@ -37,7 +37,7 @@ Crisper.prototype.get = function(){
 	var z = this
 	z._lastRequest = Date.now()
 	if (z._modTtl != z._ttl) {
-		z._modTtl = z._ttl
+		z._resetTtl()
 		z._startFetching(z._ttlRemaining())
 	}
 	return z._get()
@@ -81,9 +81,14 @@ Crisper.prototype._ttlRemaining = function(){
 }
 
 Crisper.prototype._increaseTtl = function(){
-	this._modTtl = Math.ceil(this._modTtl*1.5)
+	this._modTtl = this._ttl*fib(++this._ttli)
 	if (this._modTtl > maxTtl)
 		this._modTtl = maxTtl
+}
+
+Crisper.prototype._resetTtl = function(){
+	this._ttli = 1
+	this._modTtl = this._ttl
 }
 
 Crisper.prototype._get = function(data){
@@ -120,7 +125,7 @@ Crisper.prototype._fetch = function(){
 			return;
 		if (err) {
 			// reset ttl on error
-			z._modTtl = z._ttl
+			z._resetTtl()
 		} else {
 			z._set(data)
 		}
@@ -130,5 +135,17 @@ Crisper.prototype._fetch = function(){
 			z._fetch()
 		},z._modTtl)
 	})
+}
+
+
+function fib(n){
+	var z = fib,undef,i;
+	if (!z.vals)
+		z.vals = [1,1];
+	if (z.vals[n] !== undef)
+		return z.vals[n];
+	for (i=z.vals.length;i<=n;++i)
+		z.vals[i] = z.vals[i-2] + z.vals[i-1];
+	return z.vals[n];
 }
 
