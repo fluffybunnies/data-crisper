@@ -68,7 +68,7 @@ Return the current default
 
 Stop fetching
 
-The value returned from `get()` will not change while paused
+The value returned from `get()` will not change while paused. i.e. values in the process of being fetched will be trashed.
 
 
 ### Crisper.resume()
