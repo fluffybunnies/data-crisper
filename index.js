@@ -1,5 +1,6 @@
 
-var defaultTtl = 30000
+var fib = require('fib')
+,defaultTtl = 30000
 ,maxTtl = 2147483647
 
 module.exports = crisper
@@ -135,17 +136,5 @@ Crisper.prototype._fetch = function(){
 			z._fetch()
 		},z._modTtl)
 	})
-}
-
-
-function fib(n){
-	var z = fib,undef,i;
-	if (!z.vals)
-		z.vals = [1,1];
-	if (z.vals[n] !== undef)
-		return z.vals[n];
-	for (i=z.vals.length;i<=n;++i)
-		z.vals[i] = z.vals[i-2] + z.vals[i-1];
-	return z.vals[n];
 }
 

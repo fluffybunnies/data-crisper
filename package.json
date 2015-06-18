@@ -1,6 +1,6 @@
 {
 	"name": "data-crisper",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "Refresh cached data on an interval that decays if not being accessed",
 	"keywords": [
 		"cache",
@@ -15,6 +15,9 @@
 	"repository": {
 		"type": "git",
 		"url": "git@github.com:fluffybunnies/data-crisper.git"
+	},
+	"dependencies": {
+		"fib": "0.0.1"
 	},
 	"devDependencies": {
 		"tape": "~4.0.0"

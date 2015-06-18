@@ -1,3 +1,11 @@
+## 0.0.5 (2015-06-18)
+
+Features
+
+	- Replaced fib method with fib module
+
+
+
 ## 0.0.4 (2015-06-05)
 
 Features
