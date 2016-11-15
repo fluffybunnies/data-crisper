@@ -2,36 +2,37 @@
 
 # data-crisper
 
-Refresh cached data on a decaying interval. Getter is synchronous and non-blocking for client performance. For use when your app is ok with stale data when requests are low.
+Refresh cached data on a decaying interval. Getter is synchronous and non-blocking for client performance. For use when your app is ok with stale data when requests are infrequent.
 
 
 ## Usage
 ```javascript
 var crisper = require('data-crisper')
 
-var cache = crisper(30000, function(cb){
+var footerDataCache = crisper(60000, function(cb){
 	api.fetch('get/my/data',function(err,data){
 		cb(err,data)
 	})
 })
 
 require('http').createServer(function(req, res){
-	var myData = cache.get()
-	,footerHtml = renderView('footer', myData)
-	res.end('<html><body><header>my website</header>is awesome.'
-		+ 'heres some less important info in the footer:<footer>'+footerHtml+'</footer></body></html>')
+	var footerHtml = renderView('footer', footerDataCache.get())
+	res.end('<html><body>'
+		+ '<header>My website</header><main>is awesome.</main>'
+		+ 'heres some less important info in the footer:<footer>'+footerHtml+'</footer>'
+	+ '</body></html>')
 }).listen(3000)
 
 // optional: set default value - will be returned if no data in cache
-cache.setDefault({});
+footerDataCache.setDefault({});
 
 ```
 
 
-## Methods
+## Api
 
 
-### crisper( ttl, fetchData [, defaultValue] )
+### crisper( [ttl,] fetchData [, defaultValue] )
 
 Returns a `Crisper` that will `fetchData()` and update cache every `ttl` ms behind the scenes
 
@@ -51,7 +52,7 @@ Otherwise returns `getDefault()`
 
 ### Crisper.getSilently()
 
-Same as 'get()' but will not affect `ttl`
+Same as `get()` but will not affect `ttl`
 
 
 ### Crisper.setDefault( value )

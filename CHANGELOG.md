@@ -1,3 +1,11 @@
+## 0.0.6 (2016-11-15)
+
+Features
+
+	- Updated README.md
+
+
+
 ## 0.0.5 (2015-06-18)
 
 Features
